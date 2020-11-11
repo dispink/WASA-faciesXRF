@@ -15,6 +15,7 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 7. Update the database (three tables: elemental intensities, spetra, and infos) due to the update of composite depth, section depth and further infos. `update_database.ipynb`. Data length: 170436
 8. Twelve elements (Si, S, Cl, K, Ca, Ti, Fe, Br, Rb, Sr, Zr, Ba) are selected by `select_element.ipynb`.
 9. The labels of facies are digitalized and built as an array. There are several versions of the labels along the time I tried ML. They are simplified and arranged together in `build_labels.ipynb`.
+10. The rolling trick to capture the composite characteristic of facies is applied in `ML_element_01.ipynb`.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If you're a newby student want to work on large geochemical and sedimentary dataset, you might find something interesting in this project. If you're a experienced data scientist, you might find immature way of analyzing in this project. After all, I'm willing to share my experience to you.
