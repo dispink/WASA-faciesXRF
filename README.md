@@ -16,6 +16,7 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 8. Twelve elements (Si, S, Cl, K, Ca, Ti, Fe, Br, Rb, Sr, Zr, Ba) are selected by `select_element.ipynb`.
 9. The labels of facies are digitalized and built as an array. There are several versions of the labels along the time I tried ML. They are simplified and arranged together in `build_labels.ipynb`.
 10. The elemental intensities of XRF is focused first. The rolling trick to capture the composite characteristic of facies is applied in `ML_element_01.ipynb`.
+11. Logistic regression classifier is applied to the rolled elemental data. The attepmts with and without PCA as a transformation is tested. The gridsearch results are visualized. The workflow and some problems are addressed in `ML_element_02.ipynb`. `grid_lr.py`, `split.py`, and `submit_lr.sh` are used for this step.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If you're a newby student want to work on large geochemical and sedimentary dataset, you might find something interesting in this project. If you're a experienced data scientist, you might find immature way of analyzing in this project. After all, I'm willing to share my experience to you.
