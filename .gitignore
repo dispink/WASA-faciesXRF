@@ -2,3 +2,7 @@
 data/
 results/
 sync.txt
+__pycache__/
+dask-worker-space/
+job_logs/
+models/
