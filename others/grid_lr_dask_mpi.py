@@ -44,7 +44,8 @@ param_grid = {'logisticregression__C': [10**_ for _ in range(-4, 6)]}
 
 mycv = my_group_stratify_shuffle_cv(X_train, y_train, groups_train)
 
-grid = GridSearchCV(lr, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', n_jobs = -1)
+grid = GridSearchCV(lr, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', 
+                    return_train_score = False, scheduler = client, n_jobs = -1)
 
 grid.fit(X_train, y_train)
 
@@ -68,7 +69,8 @@ param_grid = {'logisticregression__C': [10**_ for _ in range(-4, 6)]}
 
 mycv = my_group_stratify_shuffle_cv(X_train, y_train, groups_train)
 
-grid = GridSearchCV(lr, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', n_jobs = -1)
+grid = GridSearchCV(lr, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', 
+                    return_train_score = False, scheduler = client, n_jobs = -1)
 
 grid.fit(X_train, y_train)
 

@@ -12,7 +12,7 @@
 module purge
 module load openmpi/4.0.4
 
-mkdir ~/WASA_faciesXRF/job_logs/job_$SLURM_JOB_ID
-cd ~/WASA_faciesXRF/job_logs/job_$SLURM_JOB_ID
+#mkdir ~/WASA_faciesXRF/job_logs/job_$SLURM_JOB_ID
+#cd ~/WASA_faciesXRF/job_logs/job_$SLURM_JOB_ID
 
 mpirun /home/users/aslee/miniconda3/bin/python /home/users/aslee/WASA_faciesXRF/grid_lr_dask_mpi.py
