@@ -25,7 +25,7 @@ def my_group_stratify_shuffle_cv(X, y, groups, n_splits = 5, random_state = 24):
         
         yield train_idxs, test_idxs
         
-def my_train_test_split(X, y, groups, random_state = 24):
+def my_train_test_split(y, groups, random_state = 24):
     np.random.seed(random_state) 
 
     # make sure the test set has at least one section for each facies
