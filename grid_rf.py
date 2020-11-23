@@ -18,10 +18,10 @@ print('Begin: RF')
 
 data_df = pd.read_csv('{}data/XRF_ML_cr.csv'.format(path))
 X = data_df.iloc[:, 1:-2].values
-y = data_df['facies_merge_1'].values
+y = data_df['facies_merge_2'].values
 groups = data_df['core_section'].values
 
-train_idx, test_idx = my_train_test_split(X, y, groups)
+train_idx, test_idx = my_train_test_split(y, groups)
 X_train = X[train_idx]
 y_train = y[train_idx]
 groups_train = groups[train_idx]
@@ -49,9 +49,9 @@ grid.fit(X_train, y_train)
 print("Best score on validation set: {:.2f}".format(grid.best_score_)) 
 print("Best parameters: ", grid.best_params_)
 
-pd.DataFrame(grid.cv_results_).to_csv('{}results/roll_rf_grid_ss_{}.csv'.format(path, date))
+pd.DataFrame(grid.cv_results_).to_csv('{}results/roll_rf_grid_{}.csv'.format(path, date))
 
 from joblib import dump, load
-dump(grid.best_estimator_, '{}models/roll_rf_model_ss_{}.joblib'.format(path, date)) 
+dump(grid.best_estimator_, '{}models/roll_rf_model_{}.joblib'.format(path, date)) 
 
 print("The computation takes {} hours.".format((perf_counter() - start)/3600))
