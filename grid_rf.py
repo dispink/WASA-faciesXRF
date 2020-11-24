@@ -28,28 +28,31 @@ groups_train = groups[train_idx]
 
 del data_df, X, y, groups
 
-pipe = Pipeline([('scaling', StandardScaler()),('pca', PCA(whiten=True)), ('rf', RandomForestClassifier(class_weight='balanced', random_state=24, n_jobs=-1))])
+#pipe = Pipeline([('scaling', StandardScaler()),('pca', PCA(whiten=True)), ('rf', RandomForestClassifier(class_weight='balanced', random_state=24, n_jobs=-1))])
 
-param_grid = [
-    {'scaling': [StandardScaler()],
-     'pca': [PCA(whiten=True)],
-     'rf__n_estimators':[100, 1000, 5000]},
-    {'scaling': [None],
-     'pca': [None],
-     'rf__n_estimators':[100, 1000, 5000]}
-]
+#param_grid = [
+#    {'scaling': [StandardScaler()],
+#     'pca': [PCA(whiten=True)],
+#     'rf__n_estimators':[100, 1000, 5000]},
+#    {'scaling': [None],
+#     'pca': [None],
+#     'rf__n_estimators':[100, 1000, 5000]}
+#]
+rf = RandomForestClassifier(class_weight='balanced', random_state=24, n_jobs=-1)
+
+param_grid = {'max_depth': [5], 'n_estimators': [100, 1000, 5000, 10000, 50000]}
 
 mycv = my_group_stratify_shuffle_cv(X_train, y_train, groups_train)
 
-grid = GridSearchCV(pipe, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', 
-                    return_train_score = False, n_jobs = 30)
+grid = GridSearchCV(rf, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', 
+                    return_train_score = False, n_jobs = 25)
 
 grid.fit(X_train, y_train)
 
 print("Best score on validation set: {:.2f}".format(grid.best_score_)) 
 print("Best parameters: ", grid.best_params_)
 
-pd.DataFrame(grid.cv_results_).to_csv('{}results/roll_rf_grid_{}.csv'.format(path, date))
+pd.DataFrame(grid.cv_results_).to_csv('{}results/roll_rf_grid_3_{}.csv'.format(path, date))
 
 from joblib import dump, load
 dump(grid.best_estimator_, '{}models/roll_rf_model_{}.joblib'.format(path, date)) 
