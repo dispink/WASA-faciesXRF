@@ -9,5 +9,6 @@
 #SBATCH -t 24:00:00
 
 
-/home/users/aslee/miniconda3/bin/python /home/users/aslee/WASA_faciesXRF/grid_svc.py
+#/home/users/aslee/miniconda3/bin/python /home/users/aslee/WASA_faciesXRF/grid_svc.py
 #/home/users/aslee/miniconda3/bin/python /home/users/aslee/WASA_faciesXRF/grid_svc_se.py
+/home/users/aslee/miniconda3/bin/python /home/users/aslee/WASA_faciesXRF/build_prob_svc.py
