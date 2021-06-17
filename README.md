@@ -5,7 +5,7 @@ It is a research project in the framework of Wadden Sea Archive Project (WASA). 
 I'm a PhD student started this development from spring 2019. Our research group is GEOPOLAR, University of Bremen. During this period, some results are achieved. I think it's time to share my workflow and scripts with the open source community because I've been benifited a lot from the community. 
 
 ## General workflow
-Itrax-XRF core scanner produces raw spectral files (I would just call them spectra) and elemental intensities file (result.txt) quickly tuned using default setting file in each run. Among the steps, there are many bugs caused by inconsistent naming and manual processing during scanning. I only updload the main scripts, otherwise it will be too messy.<br> 
+Itrax-XRF core scanner produces raw spectral files (I would just call them spectra) and elemental intensities file (result.txt) quickly, tuned using default setting file in each run. Among the steps, there are many bugs caused by inconsistent naming and manual processing during scanning. I only upload the main scripts and summarize the steps here, otherwise it will be too messy. For the detailed steps, please check commit log.<br> 
 1. I adopt the core-section information from WASA_Umrechnung_Kerntiefen_20190313.xlsx and read all the result.txt files to construct a table having elemental intensities and information for each run (e.g., directroy of spectral file, MSE, and validity) by applying `rawdata_preparation.py`. The composite depth is calculated and asigned.
 2. I adopt the table produced by `rawdata_preparation.py` to clean out bad quality scanning points by applying`rawdata_cleaning.py`. Later on, the composite_id is built by combining core and composite depth to be index of each scanning point
 3. I use `spectradata_preparation.py` to adopt the new directories of spectral files recorded in the table produced by `rawdata_cleaning.py` and construct a cleaned table of spectra.
@@ -22,6 +22,19 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 1. Visualize and evaluate the performance of the three optimized models (lr, svc, rf) using test set (`ML_element_04.ipynb`). It turns out the dataset needs to be modified and the workflow has to be carried out again.
 1. Redo the workflow (11, 12, 13) using the updated elemtenal data and evaluate performance of models (`ML_element_05.ipynb`).
 1. Further optimization and model evaluation for the rf approach (`ML_element_06.ipynb`). 
+2. Redesign the data splitting strategy. The dataset is splitted into training, dev (development) and test sets in later on steps by importing functions in `split.py`. The test set is kept to the real end and for future applications to compare. I'm using only dev set to optimize our model. 
+3. Apply error analysis on the dev set. I print out two core sections having most errors (wrong predictions) in each facies and manually determine the eroor categories. This analysis is iteratively processed to get logical understanding. The idea of error analysis is well described in "[Machine Learning Yearning](https://d2wvfoqc9gyqzf.cloudfront.net/content/uploads/2018/09/Ng-MLY01-13.pdf)", written by Andrew Ng. The works are carried out in `ML_element_08.ipynb` and `ML_element_09.ipynb`. The results are useful for discussing what reasons obstacle our models' preformance and for further optimizing.
+4. I compare the models' performance on three kinds of data to see the benifit of feature engineering. They are the raw data, rolling data and image-like data. The image-like data has the same logic as the rolling data but instead of representing each data point by the mean and s.d., I include all adjacent data as a 2D data block to represent each data point. 
+    - The models are retrained by:<br> 
+    `submit_raw.sh` `grid_raw_lr.py` `grid_raw_svc.py` `grid_raw_rf.py`<br>
+    `submit.sh` `grid_lr.py` `grid_svc.py` `grid_rf.py`<br>
+    `submit_2d.sh` `grid_2d_lr.py` `grid_2d_svc.py` `grid_2d_rf.py`  
+    P.S. `create_2d_data.py` and `ML_element_11.ipynb` is used to create the image-like data<br>
+    - The models' performance is evaluated and visualized in:<br>
+    `ML_element_10.ipynb`<br>
+    `produce_2d_evaluations.py` `ML_element_12.ipynb`<br>
+    `produce_roll_evaluations.py` `ML_element_13.ipynb`<br>
+5. The confidence score of the SVC model on the predictions are illustrated in `ML_element_07.ipynb`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If you're a newby student want to work on large geochemical and sedimentary dataset, you might find something interesting in this project. If you're a experienced data scientist, you might find immature way of analyzing in this project. After all, I'm willing to share my experience to you.
