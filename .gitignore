@@ -7,3 +7,4 @@ dask-worker-space/
 job_logs/
 models/
 ML_improvement*
+.vscode/
