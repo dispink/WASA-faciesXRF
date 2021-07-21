@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This script is used to compile different post-process codes and excute the post-process on the dev set.
+This script is used to compile different evaluation codes.
 """
 import numpy as np
 import pandas as pd
