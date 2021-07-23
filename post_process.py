@@ -119,7 +119,7 @@ def add_facies(objects_df):
 
 def vote(series):
     """
-    The series must be pd.Series having facies_second, facies_above and facies_below as columns.
+    The series must be pd.Series having facies, facies_second, facies_above and facies_below as indices.
     This function can return the dominant facies among the list of facies (dominant second, above and below facies).
     If the amount of facies are equal, the above facies is returned. If the above facies is missing, the below facies is returned.
     This is different from return_do().
@@ -131,7 +131,11 @@ def vote(series):
         try:
             return int(series.facies_above)
         except ValueError: # when above facies is None
-            return int(series.facies_below)
+            try: 
+                return int(series.facies_below)
+            except ValueError: 
+            # when both above and below facies are None, i.e. whole section is classidied the same facies
+                return int(series.facies)
     else:
         return int(uniques[np.argmax(counts)])
     
@@ -170,7 +174,7 @@ def replace(series):
     }
     
     if series.thickness_mm < thickness_dict[str(series.facies)]:
-        return vote(series[-3:])
+        return vote(series[-4:])
     else:
         return series.facies
     
