@@ -187,7 +187,7 @@ class PrepareData():
         
         #return out_df
     
-class split():
+class Split():
     """
     This class combines the functions related to data spliting.
     """

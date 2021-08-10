@@ -1,7 +1,7 @@
 import numpy as np 
 import pandas as pd
 from time import perf_counter
-from wasafacies import PrepareData, split
+from wasafacies import PrepareData, Split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -25,7 +25,7 @@ prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path)
 facies, id_list = prepare.create_recla()
 X, y, groups = prepare.create_2d(facies=facies, id_list=id_list, half_window=8)
 
-train_idx, test_idx = split.train_test_split(y, groups)
+train_idx, test_idx = Split.train_test_split(y, groups)
 
 # set the pipes and parameters
 pipe_lr = Pipeline([
@@ -76,7 +76,7 @@ for model_name, pipe, param_grid in zip(['lr', 'svc', 'rf'],
     start = perf_counter()
     print('Begin: {}'.format(model_name.upper()))
     
-    mycv = split.OnegrupOnefacies_cv(y[train_idx], groups[train_idx], 
+    mycv = Split.OnegrupOnefacies_cv(y[train_idx], groups[train_idx], 
                                      n_splits = 5, random_state = 24)
     grid = GridSearchCV(pipe, param_grid = param_grid, cv = mycv, 
                         scoring = 'balanced_accuracy', n_jobs = -1)

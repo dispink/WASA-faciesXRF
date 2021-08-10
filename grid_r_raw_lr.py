@@ -1,6 +1,6 @@
 import numpy as np 
 import pandas as pd
-from wasafacies import PrepareData, split
+from wasafacies import PrepareData, Split
 
 import datetime
 date = datetime.datetime.now().strftime('%Y%m%d')
@@ -21,7 +21,7 @@ X = data_df.iloc[:, :-2].values
 y, uniques = pd.factorize(data_df['facies'])
 groups = data_df['core_section'].values
 
-train_idx, test_idx = split.train_test_split(y, groups)
+train_idx, test_idx = Split.train_test_split(y, groups)
 # This time I split the training set again to obtain dev set
 #trainn_idx, dev_idx = my_train_test_split(y[train_idx], groups[train_idx])
 #X_trainn = X[train_idx[trainn_idx]]
@@ -51,7 +51,7 @@ param_grid = [
      'lr__C': np.logspace(-4, 5, 10)}
 ]
 
-mycv = split.OnegrupOnefacies_cv(y[train_idx], groups[train_idx], n_splits = 5, random_state = 24)
+mycv = Split.OnegrupOnefacies_cv(y[train_idx], groups[train_idx], n_splits = 5, random_state = 24)
 
 grid = GridSearchCV(pipe, param_grid = param_grid, cv = mycv, scoring = 'balanced_accuracy', n_jobs = -1)
 
