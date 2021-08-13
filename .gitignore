@@ -5,6 +5,7 @@ sync.txt
 __pycache__/
 dask-worker-space/
 job_logs/
+job_logs_archive/
 models/
 ML_improvement*
 .vscode/
