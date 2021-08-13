@@ -23,7 +23,10 @@ prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path)
                       recla_dir='{}data/new facies types 20210728.xlsx'.format(path))
 
 facies, id_list = prepare.create_recla()
-X, y, groups = prepare.create_2d(facies=facies, id_list=id_list, half_window=8)
+data_df = prepare.create_2d(facies=facies, id_list=id_list)
+X = data_df.iloc[:, :-2].values
+y = data_df['facies'].values
+groups = data_df['core_section'].values
 
 train_idx, test_idx = Split.train_test_split(y, groups)
 
@@ -61,11 +64,11 @@ pipe_rf = Pipeline([('scaling', StandardScaler()),
 param_grid_rf = [
     {'pca': [PCA(n_components=50, whiten=True)], 
      'rf__n_estimators':[100, 1000, 10000],
-     'rf__max_depth': [5, 10, 15]},
+     'rf__max_depth': [3, 5, 10, 15]},
     {'scaling': [None],
      'pca': [None],
      'rf__n_estimators':[100, 1000, 10000],
-     'rf__max_depth': [5, 10, 15]}
+     'rf__max_depth': [3, 5, 10, 15]}
 ]
 
 # grid search

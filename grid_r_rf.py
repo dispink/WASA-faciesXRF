@@ -21,9 +21,8 @@ prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path)
 
 facies, id_list = prepare.create_recla()
 data_df = prepare.create_roll(facies=facies, id_list=id_list)
-
 X = data_df.iloc[:, :-2].values
-y, uniques = pd.factorize(data_df['facies'])
+y = data_df['facies'].values
 groups = data_df['core_section'].values
 
 train_idx, test_idx = Split.train_test_split(y, groups)
@@ -35,11 +34,11 @@ pipe = Pipeline([('scaling', StandardScaler()),('pca', PCA(whiten=True)), ('rf',
 param_grid = [
     {'scaling': [StandardScaler()],
      'pca': [PCA(whiten=True)],
-     'rf__max_depth': [5, 10, 15],
+     'rf__max_depth': [3, 5, 10, 15],
      'rf__n_estimators':[100, 1000, 5000]},
     {'scaling': [None],
      'pca': [None],
-     'rf__max_depth': [5, 10, 15],
+     'rf__max_depth': [3, 5, 10, 15],
      'rf__n_estimators':[100, 1000, 5000]}
 ]
 

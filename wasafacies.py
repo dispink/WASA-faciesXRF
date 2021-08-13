@@ -78,11 +78,11 @@ class PrepareData():
         (also called raw in comparison with the other two represented 
         datasets) data with the labels and id_list from create_recla().
         The output dataframe consists composite_id (as index), the clr
-        transformed 12 elements, facies and core_section. 
+        transformed 12 elements, factorized facies and core_section. 
         """
         data_df = pd.read_csv(self.data_dir, 
                               index_col=0).loc[id_list, self.elements]
-        data_df['facies'] = facies
+        data_df['facies'], _ = pd.factorize(facies)
         norm_df = pd.concat(
             [pd.DataFrame(self.clr(data_df.iloc[:, :-1].values), 
                           index = data_df.index, columns = data_df.columns[:-1]), 
@@ -98,8 +98,9 @@ class PrepareData():
         The function creates the rolling elemental data with the labels 
         and id_list from create_recla().
         It is modified from ML_element_01.ipynb.
-        The output dataframe consists composite_id (as index), the rolling 
-        data developed from clr transformed 12 elements, facies and core_section. 
+        The output dataframe consists composite_id (as index), the 
+        rolling data developed from clr transformed 12 elements, 
+        factorized facies and core_section. 
         """
         data_df = pd.read_csv(self.data_dir, 
                               index_col=0).loc[id_list, self.elements]
@@ -110,7 +111,7 @@ class PrepareData():
             new_cols = np.hstack((new_cols, 
                                   [col+fun for col in data_df.columns]))
 
-        data_df['facies'] = facies
+        data_df['facies'], _ = pd.factorize(facies)
         norm_df = pd.concat(
             [pd.DataFrame(self.clr(data_df.iloc[:, :-1].values), 
                           index = data_df.index, 
@@ -136,15 +137,7 @@ class PrepareData():
         r_df.columns = new_cols
         r_df = pd.concat([r_df, norm_df.loc[:, ['facies', 'core_section']]], 
                          join = 'inner', axis = 1)
-        r_c_df = r_df.dropna(axis = 0).copy()
-
-        # to check
-        print('The clr transformed data shape: {}'.format(norm_df.shape))
-        print('The rolling data shape: {}'.format(r_df.shape))
-        print('The tolling data shape without NA: {}'.format(r_c_df.shape))
-        na_df = norm_df.loc[r_df[r_df.iloc[:, 1].isna()].index]
-        unique, count = np.unique(na_df.core_section, return_counts=True)
-        print('NA amount in each section: {}'.format(count))
+        r_c_df = r_df.dropna(axis = 0)
 
         # return the pd.DataFrame
         return r_c_df
@@ -155,16 +148,9 @@ class PrepareData():
         labels and id_list from create_recla(). Since the data size is
         huge, three ndarrays are output intead of the pd>DataFrame like 
         create_raw() and create_roll. They are the image-like data 
-        developed from clr transformed 12 elements, facies and core_section. 
+        developed from clr transformed 12 elements, factorized facies, 
+        core_section and index. 
         """
-        #data_df = pd.read_csv(file_dir)
-        #x = self.clr(data_df.iloc[:, 6:].values)
-
-        #norm_df = pd.concat(
-        #[pd.DataFrame(x, columns = data_df.columns[6:]), 
-        # data_df[['composite_id', 'core_section', 'facies_merge_2']]],
-        #join = 'inner', axis = 1
-        #)
         # adopt and sort the clr transformed raw element data
         # and then use numbers as the index
         # sorting is to make sure the depth are not mixed
@@ -176,16 +162,14 @@ class PrepareData():
             for index in norm_df.index[norm_df.core_section == section][half_window:-half_window]:
                 X.append(norm_df.iloc[index-half_window: index+half_window+1, 1:-2].values.ravel())
                 id_list.append(index)
-                
-        y, _ = pd.factorize(norm_df.facies[id_list])
 
-        return np.array(X), y, norm_df.core_section[id_list].values
-        #out_df = pd.DataFrame(np.array(X))
-        #out_df['facies'] = norm_df.facies[id_list].values
-        #out_df['core_section'] = norm_df.core_section[id_list].values
-        #out_df.index = norm_df.composite_id[id_list].values
+        #return np.array(X), norm_df.facies[id_list].values, norm_df.core_section[id_list].values, norm_df.composite_id[id_list].values
+        out_df = pd.DataFrame(np.array(X))
+        out_df['facies'] = norm_df.facies[id_list].values
+        out_df['core_section'] = norm_df.core_section[id_list].values
+        out_df.index = norm_df.composite_id[id_list].values
         
-        #return out_df
+        return out_df
     
 class Split():
     """
@@ -250,3 +234,84 @@ class Split():
         )
         
         return train_idxs, test_idxs
+
+class Evaluation():
+    def detect_conjuction(data_df, y_preds, facies_amount):
+        """
+        data_df is the dataframe having core_section and labels.
+        y_preds is a list of the column names of labels in data_df you
+        want to plot. facies_amount gives ability to adopt different 
+        classification categories.
+        The function return a tuple of conjunction matrices.
+        """
+        
+        data_df['id'] = range(len(data_df))
+        mat_dict = {}
+
+        for y_pred in y_preds:
+            y_mean = []
+            composite_id = []
+            model_name = y_pred[2:] if len(y_pred)>1 else 'description'
+            X_df = data_df[~data_df[y_pred].isna()]
+            
+            for section in np.unique(X_df.core_section):
+                y_mean = np.hstack((y_mean, X_df.loc[X_df.core_section == section, y_pred].rolling(window = 2).mean()))
+                composite_id = np.hstack((composite_id, X_df[X_df.core_section == section].index))
+
+            # merge the rolling with the original label
+            # this will lost the first data poit in each section, but it doesn't mater
+            # because the boundary shouldn't be at the begining of each section
+            tmp_df = pd.concat([X_df, pd.DataFrame({'y_mean': y_mean}, index = composite_id).dropna()], join = 'inner', axis = 1)
+
+            # if y_pred is not same as y_mean, it means there is a boundary (facies change) between this and above depth
+            bd_df = tmp_df[tmp_df[y_pred] != tmp_df.y_mean].copy()
+            bd_df['ab_id'] = bd_df.id - 1
+            if len(model_name) > 6:
+                print('There are {} boundaries in description.'.format(len(bd_df)))
+            else:
+                print('There are {} boundaries in the optimized {} model\'s predictions.'.format(len(bd_df), model_name))
+
+            # build matrix of boundaries
+            bd_mat = np.zeros(shape = (facies_amount, facies_amount), dtype = int)
+
+            for row in bd_df.iterrows():
+                tmp = np.zeros(shape = (facies_amount, facies_amount), dtype = int)
+                tmp[int(data_df[y_pred][int(row[1].ab_id)]), 
+                    int(data_df[y_pred][int(row[1].id)])] = 1
+                bd_mat += tmp
+                
+            mat_dict[y_pred] = bd_mat
+        
+        return mat_dict
+
+    def make_recall(data_df, y_preds, Facies):
+        """
+        data_df is the dataframe having core_section and labels.
+        y_preds is a list of the column names of labels you want to 
+        plot.
+        Faceis is a list of facies name, which is the index of 
+        factorization using the facies output of PrepareData.recla().
+        split is the name of the dataset, which used for filename 
+        (train, dev or test).
+        The function ouput a tuple of pd.DataFrames of confusion 
+        matrices.
+        """
+        from sklearn.metrics import confusion_matrix
+
+        con_per = {}
+        for col in y_preds:
+            # make confusion matrix between prediction and actual labels
+            X_df = data_df[~data_df[col].isna()]
+            confusion = confusion_matrix(X_df.y, X_df[col])
+            model_name = col[2:]
+            con_df = pd.DataFrame(confusion, index = Facies, columns = Facies)
+
+            # normalize the counts in each row and present in percent
+            x = np.copy(confusion).astype(float)
+            x /= x.sum(axis = 1, keepdims = True)
+            con_per[col] = pd.DataFrame((x*100).astype(int), index = Facies, columns = Facies)
+
+        return con_per
+
+
+            

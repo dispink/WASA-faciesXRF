@@ -5,7 +5,7 @@ from wasafacies import PrepareData, Split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from joblib import dump
 
@@ -25,33 +25,29 @@ data_df = prepare.create_2d(facies=facies, id_list=id_list)
 X = data_df.iloc[:, :-2].values
 y = data_df['facies'].values
 groups = data_df['core_section'].values
+
 train_idx, test_idx = Split.train_test_split(y, groups)
 
 # set the pipes and parameters
-pipe= Pipeline([('scaling', StandardScaler()),
-                 ('pca', PCA()), 
-                 ('rf', RandomForestClassifier(class_weight='balanced', 
-                                               random_state=24, 
-                                               n_jobs=-1))])
+pipe = Pipeline([
+    ('scaling', StandardScaler()),
+    ('pca', PCA()), 
+    ('lr', LogisticRegression(max_iter = 10000, class_weight='balanced'))])
 
 param_grid = [
-    {'pca': [PCA(n_components=50, whiten=True)], 
-     'rf__n_estimators':[100, 1000, 10000],
-     'rf__max_depth': [3, 5, 10, 15]},
-    {'scaling': [None],
-     'pca': [None],
-     'rf__n_estimators':[100, 1000, 10000],
-     'rf__max_depth': [3, 5, 10, 15]}
+    {'pca': [PCA(n_components=50, whiten=True)],
+     'lr__C': np.logspace(-8, 2, 11)},
+    {'pca': [None],
+     'lr__C': np.logspace(-8, 2, 11)}
 ]
 
-model_name = 'rf'
-
 # grid search
+model_name = 'lr'
 start = perf_counter()
 print('Begin: {}'.format(model_name.upper()))
 
 mycv = Split.OnegrupOnefacies_cv(y[train_idx], groups[train_idx], 
-                                 n_splits = 5, random_state = 24)
+                                    n_splits = 5, random_state = 24)
 grid = GridSearchCV(pipe, param_grid = param_grid, cv = mycv, 
                     scoring = 'balanced_accuracy', n_jobs = -1)
 grid.fit(X[train_idx], y[train_idx])
@@ -61,6 +57,6 @@ print("Best parameters: ", grid.best_params_)
 
 pd.DataFrame(grid.cv_results_).to_csv('{}results/r_2d_{}_grid_{}.csv'.format(path, model_name, date))
 dump(grid.best_estimator_, 
-     '{}models/r_2d_{}_model_{}.joblib'.format(path, model_name, date)) 
+        '{}models/r_2d_{}_model_{}.joblib'.format(path, model_name, date)) 
 
 print("The computation takes {:.1f} mins.\n".format((perf_counter() - start)/60))

@@ -16,9 +16,8 @@ prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path)
 
 facies, id_list = prepare.create_recla()
 data_df = prepare.create_raw(facies=facies, id_list=id_list)
-
 X = data_df.iloc[:, :-2].values
-y, uniques = pd.factorize(data_df['facies'])
+y = data_df['facies'].values
 groups = data_df['core_section'].values
 
 train_idx, test_idx = Split.train_test_split(y, groups)
