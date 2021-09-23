@@ -1,7 +1,6 @@
 """
 This script is used to build final maodel based on the results of grid search and error analysis.
 """
-import numpy as np 
 import pandas as pd
 from split import my_train_test_split
 
@@ -12,7 +11,8 @@ from time import perf_counter
 start = perf_counter()
 
 path = '/home/users/aslee/WASA_faciesXRF/'
-print('Begin')
+print('Build the optimal model (SVC+PCA) on training+dev set')
+print('It has the calibrated probability')
 
 data_df = pd.read_csv('{}data/XRF_ML_cr.csv'.format(path))
 X = data_df.iloc[:, 1:-2].values
@@ -28,13 +28,17 @@ del data_df, X, y, groups
 
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 
-pipe = make_pipeline(StandardScaler(), SVC(C=100, gamma=1e-5, class_weight='balanced'))
+pipe = make_pipeline(
+    StandardScaler(), 
+    PCA(whiten=True), 
+    SVC(C=100, gamma=1e-5, class_weight='balanced', probability=True))
 
 pipe.fit(X_train, y_train)
 
-from joblib import dump, load
-dump(pipe, '{}models/roll_svc_model_{}.joblib'.format(path, date)) 
+from joblib import dump
+dump(pipe, '{}models/roll_svc_train+dev_model_{}.joblib'.format(path, date)) 
 
 print("The computation takes {} hours.".format((perf_counter() - start)/3600))
