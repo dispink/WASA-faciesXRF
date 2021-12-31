@@ -1,5 +1,10 @@
 """
 This module is built for the process after reclassification.
+
+NOTES for future update:
+1. Facterize the facies labels in the begining to avoid inconsistent
+   labeling in different data representations.
+2. Ploshing the codes. 
 """
 
 import numpy as np
