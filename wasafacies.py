@@ -2,9 +2,7 @@
 This module is built for the process after reclassification.
 
 NOTES for future update:
-1. Facterize the facies labels in the begining to avoid inconsistent
-   labeling in different data representations.
-2. Ploshing the codes. 
+1. Ploshing the codes. 
 """
 
 import numpy as np
@@ -19,7 +17,7 @@ class PrepareData():
     
     def __init__(self, data_dir='data/XRF_results.cleaned.all.csv', 
                  info_dir='data/info.cleaned.all.csv', 
-                 recla_dir='data/new facies types 20210728.xlsx', 
+                 recla_dir='data/new facies types 20220120.xlsx', 
                  elements=['Si', 'S', 'Cl', 'K', 'Ca', 'Ti', 
                            'Fe', 'Br', 'Rb', 'Sr', 'Zr', 'Ba']):        
         self.data_dir = data_dir
@@ -38,13 +36,13 @@ class PrepareData():
 
     def create_recla(self):
         """
-        The script creates the lists of reclassified facies and 
-        filtered composite_id.
+        The script creates the lists of reclassified facies (index not str) 
+        and filtered composite_id.
         recla_dir is the directory of the reclassification excel.
         info_dir is the directory of the info file.
         """
         # read the excel of new classified labels and depths
-        excel_df = pd.read_excel(self.recla_dir, skiprows=5, index_col=0)
+        excel_df = pd.read_excel(self.recla_dir, skiprows=5)
         fa_list = []
         section_list = []
         # the boundary is in cm
@@ -54,7 +52,7 @@ class PrepareData():
         for _, row in excel_df.iterrows():
             for seg in row['Core sections'].split('//'):
                 if (seg != '') & (seg != ' '):      
-                    fa_list.append(row.Abbreviation)
+                    fa_list.append(row.Label)
                     section_list.append(seg.split()[0])
                     up_list.append(int(seg.split()[1].split('-')[0]))
                     bl_list.append(int(seg.split()[1].split('-')[1]))
@@ -87,7 +85,7 @@ class PrepareData():
         """
         data_df = pd.read_csv(self.data_dir, 
                               index_col=0).loc[id_list, self.elements]
-        data_df['facies'], _ = pd.factorize(facies)
+        data_df['facies'] = facies
         norm_df = pd.concat(
             [pd.DataFrame(self.clr(data_df.iloc[:, :-1].values), 
                           index = data_df.index, columns = data_df.columns[:-1]), 
@@ -116,7 +114,7 @@ class PrepareData():
             new_cols = np.hstack((new_cols, 
                                   [col+fun for col in data_df.columns]))
 
-        data_df['facies'], _ = pd.factorize(facies)
+        data_df['facies'] = facies
         norm_df = pd.concat(
             [pd.DataFrame(self.clr(data_df.iloc[:, :-1].values), 
                           index = data_df.index, 
@@ -241,6 +239,22 @@ class Split():
         return train_idxs, test_idxs
 
 class Evaluation():
+    def __init__(self, 
+                 recla_dir='data/new facies types 20220120.xlsx'):        
+        self.recla_dir = recla_dir
+
+    def get_Facies(self, out='Abbreviation'):
+        """
+        This is a function to out put a array of facies names from
+        the excel used in def create_recla. You can choose to out put
+        the full or abbreviation of facies names.  
+        """
+        excel_df = pd.read_excel(self.recla_dir, skiprows=5)
+        if out in ['Abbreviation', 'Facies']:
+            return excel_df[out].values
+        else:
+            print('Parameter out should only be Abbreviation or Facies.')
+
     def detect_conjuction(data_df, y_preds, facies_amount):
         """
         data_df is the dataframe having core_section and labels.
@@ -294,11 +308,9 @@ class Evaluation():
         data_df is the dataframe having core_section and labels.
         y_preds is a list of the column names of labels you want to 
         plot.
-        Faceis is a list of facies name, which is the index of 
-        factorization using the facies output of PrepareData.recla().
-        split is the name of the dataset, which used for filename 
-        (train, dev or test).
-        The function ouput a tuple of pd.DataFrames of confusion 
+        Faceis is a list of facies name, which should correspond to
+        the order in recla_dir.
+         The function ouput a tuple of pd.DataFrames of confusion 
         matrices.
         """
         from sklearn.metrics import confusion_matrix
@@ -308,8 +320,6 @@ class Evaluation():
             # make confusion matrix between prediction and actual labels
             X_df = data_df[~data_df[col].isna()]
             confusion = confusion_matrix(X_df.y, X_df[col])
-            model_name = col[2:]
-            con_df = pd.DataFrame(confusion, index = Facies, columns = Facies)
 
             # normalize the counts in each row and present in percent
             x = np.copy(confusion).astype(float)
@@ -317,6 +327,4 @@ class Evaluation():
             con_per[col] = pd.DataFrame((x*100).astype(int), index = Facies, columns = Facies)
 
         return con_per
-
-
             
