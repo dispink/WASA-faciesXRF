@@ -3,8 +3,8 @@
 #SBATCH -J build_model
 #SBATCH --qos normal
 #SBATCH --output=/home/users/aslee/WASA_faciesXRF/job_logs/slurm-%j.txt
-#SBATCH -c 20
-#SBATCH --mem=100GB
+#SBATCH -c 15
+#SBATCH --mem=30GB
 #SBATCH -t 05:00:00
 
 
@@ -17,5 +17,6 @@
 #/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/grid_r_lr.py
 #/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/grid_r_svc.py
 #/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/grid_r_rf.py
-/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/build_prob_svc.py
-/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/build_final_model.py
+#/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/build_prob_svc.py
+#/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/build_final_model.py
+/home/users/aslee/miniconda3/envs/wasafacies/bin/python /home/users/aslee/WASA_faciesXRF/r_build_prob_svc.py
