@@ -255,7 +255,7 @@ class Evaluation():
         else:
             print('Parameter out should only be Abbreviation or Facies.')
 
-    def detect_conjuction(data_df, y_preds, facies_amount):
+    def detect_conjuction(self, data_df, y_preds, facies_amount):
         """
         data_df is the dataframe having core_section and labels.
         y_preds is a list of the column names of labels in data_df you
@@ -303,7 +303,7 @@ class Evaluation():
         
         return mat_dict
 
-    def make_recall(data_df, y_preds, Facies):
+    def make_recall(self, data_df, y_preds, Facies):
         """
         data_df is the dataframe having core_section and labels.
         y_preds is a list of the column names of labels you want to 
