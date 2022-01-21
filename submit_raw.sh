@@ -3,8 +3,9 @@
 #SBATCH -J grid_raw
 #SBATCH --qos normal
 #SBATCH --output=/home/users/aslee/WASA_faciesXRF/job_logs/slurm-%j.txt
-#SBATCH -c 30
-#SBATCH --mem=60GB
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=50GB
 #SBATCH -t 01:00:00
 
 

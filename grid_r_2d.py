@@ -20,7 +20,7 @@ path = '/home/users/aslee/WASA_faciesXRF/'
 # prepare data
 prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path),
                       info_dir='{}data/info.cleaned.all.csv'.format(path), 
-                      recla_dir='{}data/new facies types 20210728.xlsx'.format(path))
+                      recla_dir='{}data/new facies types 20220120.xlsx'.format(path))
 
 facies, id_list = prepare.create_recla()
 data_df = prepare.create_2d(facies=facies, id_list=id_list)

@@ -17,7 +17,7 @@ path = '/home/users/aslee/WASA_faciesXRF/'
 
 prepare = PrepareData(data_dir='{}data/XRF_results.cleaned.all.csv'.format(path),
                       info_dir='{}data/info.cleaned.all.csv'.format(path), 
-                      recla_dir='{}data/new facies types 20210728.xlsx'.format(path))
+                      recla_dir='{}data/new facies types 20220120.xlsx'.format(path))
 
 facies, id_list = prepare.create_recla()
 data_df = prepare.create_raw(facies=facies, id_list=id_list)
@@ -52,7 +52,7 @@ print("Best parameters: ", grid.best_params_)
 
 pd.DataFrame(grid.cv_results_).to_csv('{}results/r_raw_rf_grid_{}.csv'.format(path, date))
 
-from joblib import dump, load
+from joblib import dump
 dump(grid.best_estimator_, '{}models/r_raw_rf_model_{}.joblib'.format(path, date)) 
 
-print("The computation takes {} hours.\n".format((perf_counter() - start)/3600))
+print("The computation takes {} mins.\n".format((perf_counter() - start)/60))
