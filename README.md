@@ -46,13 +46,23 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 ```
 ```
 ### ML implementation: reclassifying labels
-It's a major step. I finally decide to face the biggest error in our model, "the description (y) isn't really good at the begining." This error contributes most in both the error analysis and my mind. Without Dirk's help and push, I wouldn't do it because it requires doing all over the ML workflow again using the reclassified facies label. Even though I have all the codes and experience, it still needs large effort and time to redo. In summary, 1/8 of the sediments are reclassified with a more careful manner and reasonable simplification. The data quality is more exquisite but still in a large quatity. I then use these new labels and subset of data to build our models. 
+It's a major changing step. I finally decide to face the biggest error in our model, "the description (y) isn't really good at the begining." This error contributes most in both the error analysis and my mind. Without Dirk's help and push, I wouldn't do it because it requires doing all over the ML workflow again using the reclassified facies label. Even though I have all the codes and experience, it still needs large effort and time to redo. In summary, 1/8 of the sediments are reclassified with a more careful manner and reasonable simplification. The data quality is more exquisite but still in a large quatity. I then use these new labels and subset of data to build our models. 
 1. Develope scripts to adopt the new label and redo the workflow (`ML_element_15.ipynb` and `wasafacies.py`).
     - The models are trained by:<br> 
     `submit_raw.sh` `grid_r_raw_lr.py` `grid_r_raw_svc.py` `grid_r_raw_rf.py`<br>
     `submit.sh` `grid_r_lr.py` `grid_r_svc.py` `grid_r_rf.py`<br>
     `submit_2d.sh` `grid_2d.py` (including three algorithms already)  `grid_2d_rf.py` (for customaization) 
 1. Visualize and investigate the performance of models. Some data analyses are carried out and new sections are supplemented. `ML_element_16.ipynb` and the later part of `ML_element_15.ipynb`.
+1. An serious error is found: "Pleistocene marine" and "Pleistocene moraine” are sharing the same abbreviation, which I used as y, so I modify the abbreviation and use numbers as y to represent the facies in begining. This overcomes the inconsistent facterization issue in different data representations previously had. Also, the sections of sandflat are adjusted. The modifications and redo results are recorded in `ML_element_17.ipynb`.
+    - The models are trained by:<br> 
+    `submit_raw.sh` `grid_r_raw_lr.py` `grid_r_raw_svc.py` `grid_r_raw_rf.py`<br>
+    `submit.sh` `grid_r_lr.py` `grid_r_svc.py` `grid_r_rf.py`<br>
+    `submit_2d.sh` `grid_2d.py` (including three algorithms already)  
+1. Model's confidence level is explorated in `ML_element_18.ipynb`.
+
+## Paper preparation
+- `prepare_paper_01.ipynb`: polishing figures for the results of the first ML attempt.
+- `prepare_paper_02.ipynb`: polishing figures for the results of the second ML attempt (reclassifying labels) 
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If you're a newby student want to work on large geochemical and sedimentary dataset, you might find something interesting in this project. If you're a experienced data scientist, you might find immature way of analyzing in this project. After all, I'm willing to share my experience to you.
