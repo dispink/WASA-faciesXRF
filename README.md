@@ -17,8 +17,7 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 7. Update the database (three tables: elemental intensities, spetra, and infos) due to the update of composite depth, section depth and further infos. `update_database.ipynb`. Data length: 170436
 8. Twelve elements (Si, S, Cl, K, Ca, Ti, Fe, Br, Rb, Sr, Zr, Ba) are selected by `select_element.ipynb`.
 9. The labels of facies are digitalized and built as an array. There are several versions of the labels along the time I tried ML. They are simplified and arranged together in `build_labels.ipynb`.
-```
-```
+
 ### ML implementation
 1. The elemental intensities of XRF is focused first. The rolling trick to capture the composite characteristic of facies is applied in `ML_element_01.ipynb`.
 1. Logistic regression classifier (lr) is applied to the rolled elemental data. The attepmts with and without PCA as a transformation is tested. The gridsearch results are visualized. The workflow and some problems are addressed in `ML_element_02.ipynb`. `grid_lr.py`, `split.py`, and `submit_lr.sh` are used for this step.
@@ -44,8 +43,7 @@ Itrax-XRF core scanner produces raw spectral files (I would just call them spect
 1. `post_process.ipynb` and `post_process.py` are developed to implement post smoothing on the models' prediction, which we expect to reduce fragmentation and increase accuracy. There are two ways of smoothing: simple and sophisticate. After a long time developing, the simple smoothing actually does better job than the sophisticating smoothing. But, both ways can't increase the accuracy noticibly, which means the sediments are mostly misclassified in big chunks.
 1. The integrated model (SVC+post smoothing) is applied to the test set to see the final performance: `SVC_smooth_test.py` and `ML_element_14.ipynb`.
 1. Dig more deeper to the machine confidence level (`machine_confidence.ipynb` and `build_prob_svc.py`). In the meantime, I find a major mistake in the previous model building so the model is rebuilt (`build_final_model.py`).
-```
-```
+
 ### ML implementation: reclassifying labels
 It's a major changing step. I finally decide to face the biggest error in our model, "the description (y) isn't really good at the begining." This error contributes most in both the error analysis and my mind. Without Dirk's help and push, I wouldn't do it because it requires doing all over the ML workflow again using the reclassified facies label. Even though I have all the codes and experience, it still needs large effort and time to redo. In summary, 1/8 of the sediments are reclassified with a more careful manner and reasonable simplification. The data quality is more exquisite but still in a large quatity. I then use these new labels and subset of data to build our models. 
 1. Develope scripts to adopt the new label and redo the workflow (`ML_element_15.ipynb` and `wasafacies.py`).
