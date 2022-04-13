@@ -2,9 +2,10 @@
 It is a research project in the framework of Wadden Sea Archive Project (WASA). We collect the XRF profiles and core descriptions of 92 sediment cores from tidal flats, channels, and off-shore around the island of Norderney in order to develop an automatic facies recognition model. It is also an approach to utilize machine learning and data analysis methods (SciPy ecosystem in Python) on the geosciences data. The works are conducted by jupyter notebook and python script. The jupyter notebooks are mainly used for analyzing data and some trials, while the python scripts are the heavy works submitted to the high performance computation in University of Bremen. 
 
 ## Why open this project on Github
-I'm a PhD student started this development from spring 2019. There are GEOPOLAR (University of Bremen) and ENL (National Taiwan University) support my study jointly. During this period, some results are achieved. I think it's time to share my workflow and scripts with the open source community because I've been benifited a lot from the community. 
+I'm a PhD student started this development from spring 2019. There are GEOPOLAR (University of Bremen) and ENL (National Taiwan University) support my study jointly. During this period, some results are achieved. I think it's time to share my workflow and scripts with the open source community where I've been benifited a lot from. 
 
 ## General workflow
+The needed packages and relevant versions are listed in `environment.yml`.
 ### Data preparation
 Itrax-XRF core scanner produces raw spectral files (I would just call them spectra) and elemental intensities file (result.txt) quickly, tuned using default setting file in each run. Among the steps, there are many bugs caused by inconsistent naming and manual processing during scanning. I only upload the main scripts and summarize the steps here, otherwise it will be too messy. For the detailed steps, please check commit log.<br> 
 1. I adopt the core-section information from WASA_Umrechnung_Kerntiefen_20190313.xlsx and read all the result.txt files to construct a table having elemental intensities and information for each run (e.g., directroy of spectral file, MSE, and validity) by applying `rawdata_preparation.py`. The composite depth is calculated and asigned.
@@ -59,10 +60,27 @@ It's a major changing step. I finally decide to face the biggest error in our mo
     `submit.sh` `grid_r_lr.py` `grid_r_svc.py` `grid_r_rf.py`<br>
     `submit_2d.sh` `grid_2d.py` (including three algorithms already)  
 1. Model's confidence level is explorated in `ML_element_18.ipynb`.
+1. `ML_element_19.ipynb` checks the optimal model's coefficient of the features in the decision function and the amount of detected critical sections in the whole dataset (92 cores).
 
 ## Paper preparation
 - `prepare_paper_01.ipynb`: polishing figures for the results of the first ML attempt.
 - `prepare_paper_02.ipynb`: polishing figures for the results of the second ML attempt (reclassifying labels) 
+- `prepare_paper_03.ipynb`: polishing figures for the results based on the suggestions from co-authors.
+
+## How to apply our model
+We have a demo to show how to apply our developed model via Jupyter notebook. It's better for you to have basic skills about conda and Jupyter. If you are interested, please download the files from [Google drive](https://drive.google.com/file/d/1zIEfmiybB3VtQ1IcYEWBE2reEFJYGM-r/view?usp=sharing). The files are developed in the folder called "application".
+
+In order to run the application, please follow the steps below (should be able on MacOS, Windows 10, Linux):
+1. Unzip the files to your desired directory.
+1. Create a visual environment containing needed packages and relevant versions. Here we present the way via conda. To install conda please refer to its [documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). Navigate the directory having the files and execute the code in a terminal (Windows: Anaconda Powershell Promt):
+    ```
+    conda env create -f application_env.yml
+    ```
+1. Open the interface of JupyterLab by typing:
+    ```
+    jupyter-lab
+    ```
+1. Find `demo.ipynb` in the pop-up brower and open it. Follow the instructions and execute the steps inside to learn how to classify sediment facies from elemental data.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. If you're a newby student want to work on large geochemical and sedimentary dataset, you might find something interesting in this project. If you're a experienced data scientist, you might find immature way of analyzing in this project. After all, I'm willing to share my experience to you.
