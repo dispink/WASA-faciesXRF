@@ -1,0 +1,12 @@
+name: wasafacies_app
+channels:
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+  - joblib=1.0.1
+  - jupyterlab
+  - numpy=1.20.2
+  - pandas=1.2.4
+  - python=3.7.7
+  - scipy=1.6.2
