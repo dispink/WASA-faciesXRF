@@ -33,9 +33,9 @@ dtypes = {'validity': 'category', 'new_spe_dir': 'str',
           'core_ID': 'category', 'core_section': 'category'}      # to reduce the memory usage
 result_df = pd.read_csv('WASA_all_xrf_result_20190329.csv', 
                         usecols = ['validity', 'cps', 'Ar', 'Fe', 'new_spe_dir', 'core_ID', 'core_section'],
-                        dtype = dtypes)
+                        dtype = dtypes) # dtype and dtypes are the same, but only use dtypes in panda's dataframe.
 
-## criteria 1: valisity = 1 
+## criteria 1: validity = 1 
 clean_1 = result_df[result_df.validity == '1'].copy()
 out_1 = result_df[~result_df.new_spe_dir.isin(clean_1.new_spe_dir)].copy()
 out_1['reasons'] = ['validity = 0' for _ in range( len(out_1) ) ]
