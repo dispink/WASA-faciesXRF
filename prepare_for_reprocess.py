@@ -45,7 +45,7 @@ info_df = pd.DataFrame(
     
 progress = 0
     
-## cluster in label taable
+## cluster in label table
 for cluster in np.sort(info_df.labels.unique()):
     data = info_df.groupby('labels').get_group(cluster).reset_index(drop=True)
     content_sum = np.zeros((1024,), dtype = int)
@@ -61,7 +61,7 @@ for cluster in np.sort(info_df.labels.unique()):
         new_dir = tdir + '\\' + str(cluster)
         new_spe = tdir + '\\' + str(cluster) + '\\' + file
         
-        # if the directory isn't create, create one
+        # if the directory hasn't been created, create one
         if os.path.exists(new_dir) == False:   
             os.makedirs(new_dir, 0o775)
         
@@ -88,7 +88,7 @@ for cluster in np.sort(info_df.labels.unique()):
     ## write the sumspectrum
     sum_dir = tdir + '\\sumspectra\\C' + str(cluster) + '_sumspectrum.spe'
     
-    # if the directory isn't create, create one
+    # if the directory hasn't been created, create one
     if os.path.exists(tdir + '\\sumspectra') == False:   
         os.makedirs(tdir + '\\sumspectra', 0o775)
     
