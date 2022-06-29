@@ -44,6 +44,7 @@ for row, spe in enumerate(result_clean_df.new_spe_dir):
     with open(spe, 'r') as f:
         lines = f.readlines()[38:]
         
+        
         for col, txt in enumerate(lines):
             content.append( int( txt.split('\t')[1].split('\n')[0] ))                           
            
@@ -61,6 +62,7 @@ spe_df['core_ID'] = result_clean_df.core_ID
         
 spe_df.to_csv('WASA_all_xrf_spe_{}.csv'.format(date), index = False)
 
+# Time cost
 end = time.time()
 dur = (end-start)/60
 print('The process takes {} minutes'.format(dur))
