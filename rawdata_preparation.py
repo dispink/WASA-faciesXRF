@@ -20,7 +20,7 @@ import numpy as np
 
 ####################################################### 
 
-###### Set the working dorectory ######
+###### Set the working directory ######
 path = '~\\GeopolarLabor\\#Projekte\\WASA\\XRF\\data_composite'
 os.chdir(path)
 
@@ -33,10 +33,10 @@ lith_raw_df = (
         pd.read_excel(
                 'WASA_Umrechnung_Kerntiefen_20190313.xlsx', 
                 sheet_name = 'Section length', 
-                skipfooter = 4
+                skipfooter = 4 # Number of lines at bottom of file to skip
                 )
-        .drop(['Core status', 'Top section Liner length', 'Notes'], axis = 'columns')
-        )
+        .drop(['Core status', 'Top section Liner length', 'Notes'], axis = 'columns') 
+        ) # "Drop" the needless columns 
 
 # replace the blank in the columns name by _
 cols = {'Kernbezeichnung': 'core_ID'}
@@ -44,20 +44,20 @@ for col in lith_raw_df.columns[1:]:
     cols.update(
             {col: col.lower().replace(' ', '_')}
             )
-
+# remove the zero length core
 lith_df = (
         lith_raw_df[lith_raw_df['length core'] != 0]
-        .reset_index(drop = True)
-        .rename(columns = cols)
+        .reset_index(drop = True) # drop the length core column which is 0
+        .rename(columns = cols) # rename it by the cols dict
         )
-# replace the nan in section 0 by 0. this can help later process
+# replace the nan in "section 0" by 0. this can help later process
 lith_df.length_section_0 = lith_df.length_section_0.fillna(0)
 
 # uppercase all the core ID 
 for i in range(len(lith_df.core_ID)):
-    lith_df.loc[i, 'core_ID'] = lith_df.core_ID[i].upper()
+    lith_df.loc[i, 'core_ID'] = lith_df.core_ID[i].upper() # Use 'loc' for fixing the index (could be easier just used the core_ID[i])
 
-# compare the excel's core list and the list in the data_original folder
+# compare the excel's core list and the list in the data_original folder (data_composite and data_original)
 # https://www.geeksforgeeks.org/python-set-difference/
 e = set(lith_df.core_ID)
 o = set(os.listdir('..\\data_original'))
@@ -73,7 +73,7 @@ lith_df = lith_df[lith_df['core_ID'] != 'N24'].reset_index(drop = True)
 #####  Generate the composite start of each section ######
 # create an empty dataframe
 lith_composite_df = pd.DataFrame(index = lith_df.core_ID, 
-                                 columns = ['top_of_s{}'.format(i) for i in range(6)])
+                                 columns = ['top_of_s{}'.format(i) for i in range(6)]) 
 
 
 for row in range(len(lith_df)):
@@ -121,7 +121,7 @@ result_count = []
 
 for txt in result_dir_list:
     
-    # cathch the core_ID & core_section 
+    # catch the core_ID & core_section 
     core_section = txt.split('\\')[-2][:-4].upper()
     
     # deal with the inconsistency of the naming....
