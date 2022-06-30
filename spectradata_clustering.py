@@ -29,7 +29,7 @@ import seaborn as sns
 ####################################################### 
 
 
-###### Set the working dorectory ######
+###### Set the working directory ######
 path = '\\\\10.110.16.10\\GeopolarLabor\\#Projekte\\WASA\\XRF\\data_separated'
 os.chdir(path)
 
