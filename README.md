@@ -2,8 +2,8 @@
 It is a research project in the framework of Wadden Sea Archive Project (WASA). We collect the XRF profiles and core descriptions of 92 sediment cores from tidal flats, channels, and off-shore around the island of Norderney in order to develop an automatic facies recognition model. It is also an approach to utilize machine learning and data analysis methods (SciPy ecosystem in Python) on the geosciences data. The works are conducted by jupyter notebook and python script. The jupyter notebooks are mainly used for analyzing data and some trials, while the python scripts are the heavy works submitted to the high performance computation in University of Bremen. 
 
 ## Publication
+[Full-text access](https://rdcu.be/c0H09) <br>
 *Lee, A.-S., Enters, D., Huang, J.-J. S., Liou, S. Y. H., & Zolitschka, B. (2022). An automatic sediment-facies classification approach using machine learning and feature engineering. Communications Earth & Environment, 3(1), 294. https://doi.org/10.1038/s43247-022-00631-2*
-[Full-text access](https://rdcu.be/c0H09)
 
 ## Why open this project on Github
 I'm a PhD student started this development from spring 2019. There are GEOPOLAR (University of Bremen) and ENL (National Taiwan University) support my study jointly. During this period, some results are achieved. I think it's time to share my workflow and scripts with the open source community where I've been benifited a lot from. 
